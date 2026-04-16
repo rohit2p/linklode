@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% block title %}Browse Jobs – JobWeb{% endblock %}
+{% block meta_description %}Browse latest government jobs, private jobs, internships and career opportunities for students and freshers on JobWeb.{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-12">
+
+  <div class="flex flex-col lg:flex-row gap-10">
+
+    <!-- SIDEBAR FILTER -->
+    <div class="lg:w-80 flex-shrink-0">
+      <div class="bg-white border border-gray-200 rounded-3xl shadow-sm p-8 sticky top-8">
+        <h2 class="text-4xl font-bold heading-font text-zinc-900 mb-4">Filter Jobs</h2>
+        
+        <form method="get" class="space-y-8">
+          <!-- Search Input -->
+          <div>
+            <label class="block text-sm font-medium text-zinc-600 mb-2">Search by Title or Keyword</label>
+            <input type="text" 
+                   name="q" 
+                   value="{{ search|default:'' }}" 
+                   class="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-600 text-base"
+                   placeholder="e.g. Assistant, Engineer, Clerk...">
+          </div>
+
+          <!-- Category Filter -->
+          <div>
+            <label class="block text-sm font-medium text-zinc-600 mb-4">Job Category</label>
+            <div class="space-y-4 text-base">
+              {% for value, label in categories %}
+              <label class="flex items-center gap-3 cursor-pointer hover:text-blue-700 transition">
+                <input type="radio" 
+                       name="category" 
+                       value="{{ value }}" 
+                       {% if selected_category == value %}checked{% endif %}
+                       class="w-5 h-5 accent-blue-700">
+                <span>{{ label }}</span>
+              </label>
+              {% endfor %}
+              
+              <!-- All Categories -->
+              <label class="flex items-center gap-3 cursor-pointer hover:text-blue-700 transition">
+                <input type="radio" 
+                       name="category" 
+                       value="" 
+                       {% if not selected_category %}checked{% endif %}
+                       class="w-5 h-5 accent-blue-700">
+                <span class="font-medium">All Categories</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="pt-6 border-t border-gray-100">
+            <button type="submit" 
+                    class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-4 rounded-2xl transition text-base">
+              Show Results
+            </button>
+          </div>
+
+          {% if selected_category or search %}
+          <a href="{% url 'job:job_list' %}" 
+             class="block text-center text-blue-700 hover:text-blue-800 font-medium py-3 transition">
+            Clear All Filters
+          </a>
+          {% endif %}
+        </form>
+      </div>
+
+      <!-- Sidebar Advertisement Space -->
+      <div class="mt-10 bg-gray-50 border border-dashed border-gray-300 rounded-3xl h-[420px] flex items-center justify-center text-center">
+        <div class="text-gray-400">
+          <p class="text-xs uppercase tracking-widest mb-1">Advertisement</p>
+          <p class="text-sm">160×600 or 300×600 Vertical Ad</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN JOB LISTING -->
+    <div class="flex-1 min-w-0">
+
+      <!-- Page Header -->
+      <div class="mb-10">
+        <h1 class="text-4xl font-bold heading-font text-zinc-900 mb-4">
+          {% if selected_category %}
+            {{ selected_category|title }} Jobs
+          {% else %}
+            All Job Opportunities
+          {% endif %}
+        </h1>
+        <p class="text-zinc-500 mt-2">
+          {{ jobs.count }} result{{ jobs.count|pluralize }}
+          {% if search %} matching "<span class="font-medium text-zinc-700">{{ search }}</span>"{% endif %}
+        </p>
+      </div>
+
+      {% if jobs %}
+        <div class="space-y-8">
+          {% for job in jobs %}
+          <div class="bg-white border border-gray-100 hover:border-blue-200 rounded-3xl p-8 transition-all group">
+            <div class="flex flex-col lg:flex-row gap-6">
+              <div class="flex-1">
+                <span class="inline-block px-5 py-2 text-xs font-medium bg-blue-50 text-blue-700 rounded-2xl">
+                  {{ job.get_category_display }}
+                </span>
+                
+                <h2 class="text-2xl font-semibold text-zinc-900 mt-5 mb-3 group-hover:text-blue-700 transition-colors">
+                  <a href="{% url 'job:job_detail' job.pk %}" class="hover:underline">
+                    {{ job.title }}
+                  </a>
+                </h2>
+
+                <div class="flex flex-wrap gap-x-6 gap-y-3 text-sm text-zinc-600">
+                  {% if job.company %}
+                  <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-building text-blue-600"></i> {{ job.company }}
+                  </span>
+                  {% endif %}
+                  
+                  {% if job.location %}
+                  <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-location-dot text-blue-600"></i> {{ job.location }}
+                  </span>
+                  {% endif %}
+                  
+                  <span class="flex items-center gap-2 text-red-600 font-medium">
+                    <i class="fa-solid fa-clock"></i> 
+                    Deadline: {{ job.deadline|date:"d M Y" }}
+                  </span>
+                </div>
+
+                {% if job.description %}
+                <p class="mt-6 text-zinc-600 line-clamp-3">
+                  {{ job.description|truncatewords:50 }}
+                </p>
+                {% endif %}
+              </div>
+
+              <div class="lg:w-40 flex-shrink-0 self-start lg:self-center">
+                <a href="{% url 'job:job_detail' job.pk %}" 
+                   class="block w-full text-center bg-blue-700 hover:bg-blue-800 text-white font-medium py-4 rounded-2xl transition">
+                  View Details
+                </a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="bg-white border border-gray-100 rounded-3xl py-20 text-center">
+          <i class="fa-solid fa-magnifying-glass text-7xl text-gray-200 mb-6"></i>
+          <h3 class="text-2xl font-medium text-zinc-700">No matching jobs found</h3>
+          <p class="text-zinc-500 mt-3 max-w-md mx-auto">
+            We couldn't find any jobs matching your current filters. Try broadening your search or clearing filters.
+          </p>
+          <a href="{% url 'job:job_list' %}" 
+             class="mt-8 inline-block bg-blue-700 text-white px-8 py-3 rounded-2xl hover:bg-blue-800 transition">
+            Clear Filters & Browse All Jobs
+          </a>
+        </div>
+      {% endif %}
+
+      <!-- Horizontal Advertisement Space -->
+      <div class="mt-16 bg-gray-50 border border-dashed border-gray-300 rounded-3xl h-28 flex items-center justify-center">
+        <div class="text-center text-gray-400">
+          <p class="text-xs uppercase tracking-widest">Advertisement • 728×90 Leaderboard</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

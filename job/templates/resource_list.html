@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Free Study Resources – Notes, PDFs & More | JobWeb{% endblock %}
+
+{% block content %}
+<div class="space-y-10">
+  <!-- Header -->
+  <div class="text-center">
+    <h1 class="text-4xl font-bold heading-font text-zinc-900 mb-4">Free Study Resources</h1>
+    <p class="text-lg text-gray-600 max-w-2xl mx-auto">Download notes, previous year papers, syllabus PDFs and more — completely free.</p>
+  </div>
+
+  <!-- Search + Categories -->
+  <div class="flex flex-col md:flex-row gap-4 items-center justify-center">
+    <form method="get" class="flex w-full max-w-md">
+      <input type="text" name="q" value="{{ search }}" 
+             class="flex-1 px-5 py-3 border border-gray-300 rounded-l-2xl focus:outline-none focus:border-indigo-500"
+             placeholder="Search resources...">
+      <button class="bg-indigo-600 text-white px-8 rounded-r-2xl hover:bg-indigo-700 transition">Search</button>
+    </form>
+  </div>
+
+  <div class="flex flex-wrap gap-2 justify-center">
+    <a href="{% url 'job:resource_list' %}" 
+       class="px-6 py-2 rounded-3xl text-sm font-medium {% if not selected_category %}bg-indigo-600 text-white{% else %}bg-gray-100 hover:bg-gray-200{% endif %}">
+      All
+    </a>
+    {% for value, label in categories %}
+    <a href="?category={{ value }}" 
+       class="px-6 py-2 rounded-3xl text-sm font-medium {% if selected_category == value %}bg-indigo-600 text-white{% else %}bg-gray-100 hover:bg-gray-200{% endif %}">
+      {{ label }}
+    </a>
+    {% endfor %}
+  </div>
+
+  <!-- Resources Grid -->
+  {% if resources %}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    {% for res in resources %}
+    <div class="bg-white rounded-3xl shadow-sm hover:shadow-xl transition overflow-hidden group">
+      <div class="h-48 bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center">
+        <i class="fa-solid fa-file-pdf text-7xl text-red-500 group-hover:scale-110 transition"></i>
+      </div>
+      <div class="p-6">
+        <h5 class="font-semibold text-lg leading-tight mb-2 line-clamp-2">{{ res.title }}</h5>
+        <span class="inline-block bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-2xl mb-3">
+          {{ res.get_category_display }}
+        </span>
+        {% if res.description %}
+        <p class="text-gray-600 text-sm line-clamp-3 mb-4">{{ res.description }}</p>
+        {% endif %}
+        <div class="flex items-center justify-between text-xs text-gray-500">
+          <span><i class="fa-solid fa-download"></i> {{ res.download_count }} downloads</span>
+        </div>
+      </div>
+      <div class="border-t px-6 py-4">
+        <a href="{% url 'job:resource_download' res.pk %}" 
+           class="block text-center bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-2xl transition">
+          <i class="fa-solid fa-download mr-2"></i> Download Free
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-20">
+    <i class="fa-solid fa-folder-open text-6xl text-gray-300 mb-4"></i>
+    <p class="text-gray-500">No resources found matching your search.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

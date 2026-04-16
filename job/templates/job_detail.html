@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% block title %}{{ job.title }}{% if job.company %} at {{ job.company }}{% endif %} – JobWeb{% endblock %}
+{% block meta_description %}{{ job.description|truncatewords:30 }} Apply before {{ job.deadline|date:"d F Y" }}.{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_title %}{{ job.title }}{% if job.company %} – {{ job.company }}{% endif %}{% endblock %}
+{% block og_description %}{{ job.description|truncatewords:25 }} Deadline: {{ job.deadline|date:"d M Y" }}.{% endblock %}
+{% block tw_title %}{{ job.title }} | JobWeb{% endblock %}
+
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-6 py-10">
+
+  <!-- Breadcrumb (SEO + UX) -->
+  <nav aria-label="Breadcrumb" class="mb-6">
+    <ol class="flex items-center gap-2 text-sm text-zinc-400" itemscope itemtype="https://schema.org/BreadcrumbList">
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a href="{% url 'job:home' %}" itemprop="item" class="hover:text-blue-700 transition-colors">
+          <span itemprop="name">Home</span></a>
+        <meta itemprop="position" content="1" />
+      </li>
+      <li class="text-zinc-300">›</li>
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a href="{% url 'job:job_list' %}" itemprop="item" class="hover:text-blue-700 transition-colors">
+          <span itemprop="name">Jobs</span></a>
+        <meta itemprop="position" content="2" />
+      </li>
+      <li class="text-zinc-300">›</li>
+      <li class="text-zinc-600 truncate max-w-xs" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <span itemprop="name">{{ job.title }}</span>
+        <meta itemprop="position" content="3" />
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Two-column layout: main + sidebar -->
+  <div class="grid lg:grid-cols-3 gap-8">
+
+    <!-- ═══ MAIN CONTENT ═══ -->
+    <div class="lg:col-span-2">
+
+      <!-- Job Header Card -->
+      <div class="rounded-2xl overflow-hidden border border-zinc-100 mb-6">
+
+        <!-- Color bar header -->
+        <div class="px-7 py-6" style="background: var(--navy);">
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="px-3 py-1 text-xs font-medium rounded-lg bg-white/15 text-white">
+              {{ job.get_category_display }}
+            </span>
+            {% if job.is_active %}
+            <span class="px-3 py-1 text-xs font-medium rounded-lg bg-emerald-400/20 text-emerald-300 flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span> Active
+            </span>
+            {% else %}
+            <span class="px-3 py-1 text-xs font-medium rounded-lg bg-red-400/20 text-red-300">Closed</span>
+            {% endif %}
+          </div>
+
+          <h1 class="display-font text-2xl md:text-3xl font-bold text-white leading-snug">{{ job.title }}</h1>
+
+          {% if job.company %}
+          <p class="mt-3 text-blue-200 flex items-center gap-2 text-sm">
+            <i class="fa-regular fa-building"></i> {{ job.company }}
+          </p>
+          {% endif %}
+        </div>
+
+        <!-- Meta bar -->
+        <div class="grid grid-cols-2 md:grid-cols-4 bg-zinc-50 border-b border-zinc-100">
+          {% if job.location %}
+          <div class="p-4 border-r border-zinc-100">
+            <p class="text-xs text-zinc-400 uppercase tracking-wider mb-1">Location</p>
+            <p class="text-sm font-medium text-zinc-800">{{ job.location }}</p>
+          </div>
+          {% endif %}
+          <div class="p-4 border-r border-zinc-100">
+            <p class="text-xs text-zinc-400 uppercase tracking-wider mb-1">Deadline</p>
+            <p class="text-sm font-medium text-red-600">{{ job.deadline|date:"d M, Y" }}</p>
+          </div>
+          <div class="p-4 border-r border-zinc-100">
+            <p class="text-xs text-zinc-400 uppercase tracking-wider mb-1">Posted</p>
+            <p class="text-sm font-medium text-zinc-800">{{ job.created_at|date:"d M, Y" }}</p>
+          </div>
+          <div class="p-4">
+            <p class="text-xs text-zinc-400 uppercase tracking-wider mb-1">Type</p>
+            <p class="text-sm font-medium text-zinc-800">{{ job.get_category_display }}</p>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="p-7">
+          <h2 class="display-font text-xl font-bold text-zinc-900 mb-4">Job Description</h2>
+          <div class="prose prose-sm prose-zinc max-w-none text-zinc-600 leading-relaxed">
+            {{ job.description|linebreaks }}
+          </div>
+
+          {% if job.requirements %}
+          <h2 class="display-font text-xl font-bold text-zinc-900 mt-8 mb-4">Eligibility / Requirements</h2>
+          <div class="prose prose-sm prose-zinc max-w-none text-zinc-600 leading-relaxed">
+            {{ job.requirements|linebreaks }}
+          </div>
+          {% endif %}
+
+          <!-- How to Apply -->
+          <div class="mt-8 p-5 rounded-xl bg-amber-50 border border-amber-200">
+            <h3 class="font-semibold text-amber-800 mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-circle-info text-sm"></i> How to Apply
+            </h3>
+            <p class="text-sm text-amber-700 leading-relaxed mb-4 font-light">
+              Apply through the official notification or the employer's career portal. Submit all documents before the deadline.
+            </p>
+            {% if job.apply_link %}
+            <a href="{{ job.apply_link }}" target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium text-white transition-colors"
+               style="background:var(--blue)">
+              <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i> Apply on Official Site
+            </a>
+            {% else %}
+            <p class="text-sm text-zinc-500">Check the official website or notification for the application link.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Ad slot below description (in-content) -->
+      <div class="mb-8">
+        <span class="ad-label">Advertisement</span>
+        <div class="ad-slot w-full h-24 text-xs text-zinc-400 font-medium">
+          <!-- In-article AdSense unit -->
+          <!-- <ins class="adsbygoogle" style="display:block;text-align:center" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-XXXX" data-ad-slot="XXXX"></ins> -->
+          <span>Ad Space · In-article</span>
+        </div>
+      </div>
+
+      <!-- Share + back bar -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-zinc-50 rounded-2xl px-6 py-4 border border-zinc-100">
+        <div class="flex items-center gap-4 text-sm text-zinc-500">
+          <span class="font-medium">Share:</span>
+          <!-- <a href="https://wa.me/?text={{ job.title|urlencode }}%20-%20{{ request.build_absolute_uri|urlencode }}" later -->
+             target="_blank" rel="noopener" aria-label="Share on WhatsApp"
+             class="text-zinc-500 hover:text-green-600 transition-colors text-lg">
+            <i class="fa-brands fa-whatsapp"></i>
+          </a>
+          <!-- <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri|urlencode }}" later -->
+             target="_blank" rel="noopener" aria-label="Share on LinkedIn"
+             class="text-zinc-500 hover:text-blue-600 transition-colors text-lg">
+            <i class="fa-brands fa-linkedin"></i>
+          </a>
+          <button onclick="navigator.clipboard.writeText(window.location.href).then(()=>this.textContent='Copied!')"
+                  class="text-zinc-500 hover:text-zinc-800 text-lg transition-colors cursor-pointer" aria-label="Copy link">
+            <i class="fa-solid fa-link"></i>
+          </button>
+        </div>
+        <a href="{% url 'job:job_list' %}" class="text-sm font-medium flex items-center gap-1.5 hover:underline" style="color:var(--blue)">
+          ← Browse more jobs
+        </a>
+      </div>
+
+    </div><!-- /main -->
+
+    <!-- ═══ SIDEBAR ═══ -->
+    <aside class="space-y-6" aria-label="Sidebar">
+
+      <!-- Sticky ad container -->
+      <div class="lg:sticky lg:top-24">
+
+        <!-- Rectangle ad (300×250) -->
+        <div class="mb-6">
+          <span class="ad-label">Advertisement</span>
+          <div class="ad-slot w-full rounded-xl text-xs text-zinc-400 font-medium" style="min-height:250px;">
+            <!-- AdSense rectangle 300x250 -->
+            <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXX" data-ad-slot="XXXX" data-ad-format="auto"></ins> -->
+            <span>Ad Space · 300 × 250</span>
+          </div>
+        </div>
+
+        <!-- Quick Info Card -->
+        <div class="bg-white border border-zinc-100 rounded-2xl p-5 mb-6">
+          <h3 class="display-font font-bold text-zinc-900 mb-4 text-base">Quick Info</h3>
+          <ul class="space-y-3 text-sm">
+            <li class="flex items-center justify-between">
+              <span class="text-zinc-500">Category</span>
+              <span class="font-medium text-zinc-800">{{ job.get_category_display }}</span>
+            </li>
+            <li class="flex items-center justify-between border-t border-zinc-50 pt-3">
+              <span class="text-zinc-500">Deadline</span>
+              <span class="font-medium text-red-600">{{ job.deadline|date:"d M Y" }}</span>
+            </li>
+            {% if job.location %}
+            <li class="flex items-center justify-between border-t border-zinc-50 pt-3">
+              <span class="text-zinc-500">Location</span>
+              <span class="font-medium text-zinc-800">{{ job.location }}</span>
+            </li>
+            {% endif %}
+            <li class="flex items-center justify-between border-t border-zinc-50 pt-3">
+              <span class="text-zinc-500">Status</span>
+              {% if job.is_active %}
+              <span class="text-emerald-600 font-medium flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span> Active
+              </span>
+              {% else %}
+              <span class="text-red-500 font-medium">Closed</span>
+              {% endif %}
+            </li>
+          </ul>
+          {% if job.apply_link %}
+          <a href="{{ job.apply_link }}" target="_blank" rel="noopener noreferrer"
+             class="mt-5 block text-center py-3 rounded-xl text-sm font-medium text-white transition-colors"
+             style="background:var(--blue)">
+            Apply Now →
+          </a>
+          {% endif %}
+        </div>
+
+        <!-- Second sidebar ad (300×250) -->
+        <div>
+          <span class="ad-label">Advertisement</span>
+          <div class="ad-slot w-full rounded-xl text-xs text-zinc-400 font-medium" style="min-height:250px;">
+            <!-- AdSense rectangle 300x250 (second slot) -->
+            <span>Ad Space · 300 × 250</span>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+  </div><!-- /grid -->
+
+  <!-- ═══ RELATED JOBS ═══ -->
+  {% if related_jobs %}
+  <section class="mt-16" aria-labelledby="related-heading">
+    <h2 id="related-heading" class="display-font text-2xl font-bold text-zinc-900 mb-6">Similar Jobs You May Like</h2>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {% for rel in related_jobs %}
+      <article class="bg-white border border-zinc-100 rounded-2xl p-5 hover:shadow-md hover:border-blue-200 transition-all">
+        <span class="px-3 py-1 text-xs font-medium rounded-lg inline-block mb-3" style="background:var(--blue-light); color:var(--blue)">
+          {{ rel.get_category_display }}
+        </span>
+        <h3 class="font-semibold text-zinc-900 line-clamp-2 mb-1 text-sm leading-snug">{{ rel.title }}</h3>
+        {% if rel.company %}
+        <p class="text-xs text-zinc-500 mb-3">{{ rel.company }}</p>
+        {% endif %}
+        <a href="{% url 'job:job_detail' rel.pk %}" class="text-xs font-medium hover:underline" style="color:var(--blue)">
+          View Details →
+        </a>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+</div>
+{% endblock %}

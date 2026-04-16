@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Privacy Policy – JobWeb{% endblock %}
+{% block content %}
+<div class="container py-4" style="max-width:800px">
+  <h1 class="fw-bold mb-2">Privacy Policy</h1>
+  <p class="text-muted small">Last updated: {% now "F j, Y" %}</p>
+  <hr />
+  <h5 class="fw-semibold mt-4">1. Information We Collect</h5>
+  <p>We collect information you voluntarily provide (such as contact form submissions) and automatically collected data (such as browser type, IP address, and pages visited) for analytics.</p>
+  <h5 class="fw-semibold mt-4">2. How We Use Information</h5>
+  <p>We use collected information to respond to inquiries, improve our website, and serve relevant advertisements. We do not sell your personal information to third parties.</p>
+  <h5 class="fw-semibold mt-4">3. Cookies</h5>
+  <p>This website uses cookies for functionality and to serve ads through Google AdSense. You may disable cookies in your browser settings; this may affect website functionality.</p>
+  <h5 class="fw-semibold mt-4">4. Google AdSense</h5>
+  <p>We use Google AdSense to display advertisements. Google may use cookies to serve ads based on your prior visits to this site and other sites. You can opt out of personalized advertising at <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener">Google Ads Settings</a>.</p>
+  <h5 class="fw-semibold mt-4">5. Third-Party Links</h5>
+  <p>Our site contains links to external job portals and resources. We are not responsible for the privacy practices of those sites.</p>
+  <h5 class="fw-semibold mt-4">6. Contact</h5>
+  <p>For privacy concerns, contact us via our <a href="{% url 'job:contact' %}">Contact page</a>.</p>
+</div>
+{% endblock %}

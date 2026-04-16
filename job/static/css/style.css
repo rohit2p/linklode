@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.line-clamp-2 { 
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Form styling */
+input[type="text"],
+input[type="email"],
+textarea {
+  transition: all 0.2s ease;
+}
+
+input:focus,
+textarea:focus {
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+}
+
+.fw-display { font-family: 'Fraunces', serif; }
+.fw-body-font { font-family: 'DM Sans', sans-serif; }
+.fw-hero-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #185FA5;
+}
+
+.fw-stat-num {
+  font-family: 'Fraunces', serif;
+  font-size: 1.9rem;
+  font-weight: 900;
+  color: #185FA5;
+  line-height: 1;
+}
+.fw-mission-body {
+  border-left: 3px solid #185FA5;
+  padding-left: 1.25rem;
+}
+.fw-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #E6F1FB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fw-card {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.fw-card:hover {
+  box-shadow: 0 4px 24px 0 rgba(24,95,165,0.09);
+  transform: translateY(-2px);
+}

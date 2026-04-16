@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% block title %}JobWeb – Free Jobs & Study Resources for Students in India{% endblock %}
+{% block meta_description %}Find the latest government jobs, private sector roles, and internships. Download free PDFs, notes, and previous year papers. 100% free for students.{% endblock %}
+{% block og_title %}JobWeb – Free Jobs & Study Resources for Students{% endblock %}
+{% block og_description %}Daily updated job listings and free study materials for students and fresh graduates across India.{% endblock %}
+
+{% block content %}
+
+<!-- ══════════════════════════════
+     HERO
+══════════════════════════════ -->
+<section class="relative overflow-hidden" style="background: var(--navy);" aria-labelledby="hero-heading">
+  <!-- Subtle dot pattern background -->
+  <div class="absolute inset-0 opacity-10"
+       style="background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 28px 28px;"></div>
+
+  <div class="relative z-10 max-w-6xl mx-auto px-6 pt-20 pb-28 text-center">
+
+    <p class="inline-block text-xs font-medium tracking-widest uppercase mb-6 px-3 py-1.5 rounded-full border border-white/20 text-blue-200">
+      🇮🇳 Trusted by students across India
+    </p>
+
+    <h1 id="hero-heading" class="display-font text-5xl md:text-7xl font-black text-white leading-none tracking-tight mb-6">
+      Find Jobs.<br>
+      <em class="not-italic" style="color: #85B7EB;">Study Smarter.</em><br>
+      Stay Ahead.
+    </h1>
+
+    <p class="text-lg md:text-xl text-zinc-400 max-w-xl mx-auto mb-10 font-light leading-relaxed">
+      Daily updated government &amp; private job openings. Free PDFs, notes, and exam resources — all in one place, always free.
+    </p>
+
+    <div class="flex flex-wrap gap-4 justify-center">
+      <a href="{% url 'job:job_list' %}"
+         class="inline-flex items-center gap-2.5 bg-white font-medium text-sm px-7 py-3.5 rounded-xl transition-all hover:shadow-lg hover:-translate-y-0.5"
+         style="color: var(--navy)">
+        <i class="fa-solid fa-magnifying-glass text-xs"></i> Browse Jobs
+      </a>
+      <a href="{% url 'job:resource_list' %}"
+         class="inline-flex items-center gap-2.5 border border-white/25 text-white font-medium text-sm px-7 py-3.5 rounded-xl transition-all hover:bg-white/10">
+        <i class="fa-solid fa-download text-xs"></i> Free Resources
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     STATS — overlaps hero
+══════════════════════════════ -->
+<div class="max-w-4xl mx-auto px-6 -mt-10 relative z-20 mb-16">
+  <div class="bg-white border border-zinc-100 rounded-2xl shadow-xl grid grid-cols-3 divide-x divide-zinc-100">
+    <div class="py-6 px-4 text-center">
+      <p class="display-font text-3xl font-black mb-1" style="color:var(--blue)">{{ latest_jobs|length }}+</p>
+      <p class="text-xs text-zinc-500 font-medium tracking-widest uppercase">Active Jobs</p>
+    </div>
+    <div class="py-6 px-4 text-center">
+      <p class="display-font text-3xl font-black mb-1" style="color:#16a34a">{{ latest_resources|length }}+</p>
+      <p class="text-xs text-zinc-500 font-medium tracking-widest uppercase">Resources</p>
+    </div>
+    <div class="py-6 px-4 text-center">
+      <p class="display-font text-3xl font-black mb-1" style="color:#d97706">100%</p>
+      <p class="text-xs text-zinc-500 font-medium tracking-widest uppercase">Free Forever</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     LATEST JOBS
+══════════════════════════════ -->
+<section class="max-w-6xl mx-auto px-6 mb-20" aria-labelledby="jobs-heading">
+  <div class="flex items-end justify-between mb-8">
+    <div>
+      <p class="text-xs font-medium tracking-widest uppercase mb-2" style="color:var(--blue)">Fresh &amp; Verified</p>
+      <h2 id="jobs-heading" class="display-font text-3xl font-bold text-zinc-900">Latest Job Openings</h2>
+    </div>
+    <a href="{% url 'job:job_list' %}" class="text-sm font-medium flex items-center gap-1.5 hover:underline" style="color:var(--blue)">
+      View all <i class="fa-solid fa-arrow-right text-xs"></i>
+    </a>
+  </div>
+
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+    {% for job in latest_jobs %}
+    <article class="bg-white border border-zinc-100 hover:border-blue-200 rounded-2xl p-6 transition-all duration-200 hover:shadow-md flex flex-col">
+      <div class="flex items-start justify-between mb-4">
+        <span class="px-3 py-1 text-xs font-medium rounded-lg" style="background:var(--blue-light); color:var(--blue)">
+          {{ job.get_category_display }}
+        </span>
+        {% if job.is_active %}
+        <span class="flex items-center gap-1 text-xs text-emerald-600 font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span> Active
+        </span>
+        {% endif %}
+      </div>
+
+      <h3 class="font-semibold text-zinc-900 leading-snug mb-2 line-clamp-2 flex-1">
+        <a href="{% url 'job:job_detail' job.pk %}" class="hover:text-blue-700 transition-colors">
+          {{ job.title }}
+        </a>
+      </h3>
+
+      {% if job.company %}
+      <p class="text-sm text-zinc-500 mb-4 flex items-center gap-1.5">
+        <i class="fa-regular fa-building text-xs"></i> {{ job.company }}
+      </p>
+      {% endif %}
+
+      <div class="mt-auto pt-4 border-t border-zinc-50 flex items-center justify-between">
+        <p class="text-xs text-red-500 flex items-center gap-1.5 font-medium">
+          <i class="fa-regular fa-clock"></i> {{ job.deadline|date:"d M Y" }}
+        </p>
+        <a href="{% url 'job:job_detail' job.pk %}"
+           class="text-xs font-medium px-3.5 py-1.5 rounded-lg text-white transition-colors"
+           style="background:var(--blue)">
+          Details →
+        </a>
+      </div>
+    </article>
+    {% empty %}
+    <p class="col-span-3 text-center text-zinc-400 py-12">No jobs available right now. Check back soon!</p>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     AD SLOT — Mid-page banner
+══════════════════════════════ -->
+<div class="max-w-6xl mx-auto px-6 mb-20">
+  <span class="ad-label">Advertisement</span>
+  <div class="ad-slot w-full h-24 text-xs text-zinc-400 font-medium">
+    <!-- AdSense responsive — paste your <ins> code here -->
+    <span>Ad Space · Responsive</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     FREE RESOURCES
+══════════════════════════════ -->
+<!-- <section class="bg-zinc-50 py-20 mb-0" aria-labelledby="resources-heading">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="flex items-end justify-between mb-8">
+      <div>
+        <p class="text-xs font-medium tracking-widest uppercase mb-2 text-emerald-600">100% Free Downloads</p>
+        <h2 id="resources-heading" class="display-font text-3xl font-bold text-zinc-900">Study Resources</h2>
+      </div>
+      <a href="{% url 'job:resource_list' %}" class="text-sm font-medium flex items-center gap-1.5 hover:underline text-emerald-600">
+        Browse all <i class="fa-solid fa-arrow-right text-xs"></i>
+      </a>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      {% for res in latest_resources %}
+      <article class="bg-white border border-zinc-100 rounded-2xl overflow-hidden hover:shadow-md transition-all duration-200 group">
+        <div class="h-40 flex items-center justify-center" style="background: linear-gradient(135deg, #E6F1FB 0%, #EAF3DE 100%);">
+          <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-file-pdf text-2xl text-red-500"></i>
+          </div>
+        </div>
+        <div class="p-5">
+          <h3 class="font-semibold text-sm text-zinc-900 line-clamp-2 mb-4 leading-snug">{{ res.title }}</h3>
+          <a href="{% url 'job:resource_download' res.pk %}"
+             class="block text-center py-2.5 rounded-lg text-sm font-medium text-white transition-colors"
+             style="background:#16a34a"
+             aria-label="Download {{ res.title }}">
+            <i class="fa-solid fa-download mr-1.5"></i> Download Free
+          </a>
+        </div>
+      </article>
+      {% empty %}
+      <p class="col-span-4 text-center text-zinc-400 py-12">No resources available yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section> -->
+
+<!-- ══════════════════════════════
+     CATEGORIES / WHY US strip
+══════════════════════════════ -->
+<section class="max-w-6xl mx-auto px-6 py-0" aria-label="Why JobWeb">
+  <div class="text-center mb-10">
+    <p class="text-xs font-medium tracking-widest uppercase mb-2" style="color:var(--blue)">Why thousands choose us</p>
+    <h2 class="display-font text-3xl font-bold text-zinc-900">Built for students, by design.</h2>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="p-6 rounded-2xl border border-zinc-100 bg-white">
+      <div class="w-10 h-10 rounded-xl mb-4 flex items-center justify-center" style="background:var(--blue-light)">
+        <i class="fa-solid fa-bolt text-sm" style="color:var(--blue)"></i>
+      </div>
+      <h3 class="font-semibold text-zinc-900 mb-2">Daily Updated</h3>
+      <p class="text-sm text-zinc-500 font-light leading-relaxed">New jobs and resources are added every day so you never miss an opportunity.</p>
+    </div>
+    <div class="p-6 rounded-2xl border border-zinc-100 bg-white">
+      <div class="w-10 h-10 rounded-xl mb-4 flex items-center justify-center" style="background:#EAF3DE">
+        <i class="fa-solid fa-shield-halved text-sm text-emerald-600"></i>
+      </div>
+      <h3 class="font-semibold text-zinc-900 mb-2">Verified Listings</h3>
+      <p class="text-sm text-zinc-500 font-light leading-relaxed">Every job posting links to the official source. No scams, no middlemen.</p>
+    </div>
+    <div class="p-6 rounded-2xl border border-zinc-100 bg-white">
+      <div class="w-10 h-10 rounded-xl mb-4 flex items-center justify-center" style="background:#FAEEDA">
+        <i class="fa-solid fa-lock-open text-sm text-amber-600"></i>
+      </div>
+      <h3 class="font-semibold text-zinc-900 mb-2">Zero Cost</h3>
+      <p class="text-sm text-zinc-500 font-light leading-relaxed">Everything is permanently free — no sign-up, no hidden fees, no premium tiers.</p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

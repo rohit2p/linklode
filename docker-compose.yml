@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: joblink_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  web:
+    build: .
+    command: gunicorn joblink.wsgi:application --bind 0.0.0.0:8080
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8080"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
