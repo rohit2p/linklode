@@ -95,99 +95,99 @@ def privacy_policy(request):
 
 # ─── Admin Dashboard Views ────────────────────────────────────────────────────
 
-@staff_member_required
-def admin_dashboard(request):
-    total_jobs = Job.objects.count()
-    active_jobs = Job.objects.filter(is_active=True).count()
-    total_resources = Resource.objects.count()
-    unread_messages = ContactMessage.objects.filter(is_read=False).count()
-    recent_messages = ContactMessage.objects.filter(is_read=False)[:5]
-    context = {
-        'total_jobs': total_jobs,
-        'active_jobs': active_jobs,
-        'total_resources': total_resources,
-        'unread_messages': unread_messages,
-        'recent_messages': recent_messages,
-    }
-    return render(request, 'admin/dashboard.html', context)
+# @staff_member_required
+# def admin_dashboard(request):
+#     total_jobs = Job.objects.count()
+#     active_jobs = Job.objects.filter(is_active=True).count()
+#     total_resources = Resource.objects.count()
+#     unread_messages = ContactMessage.objects.filter(is_read=False).count()
+#     recent_messages = ContactMessage.objects.filter(is_read=False)[:5]
+#     context = {
+#         'total_jobs': total_jobs,
+#         'active_jobs': active_jobs,
+#         'total_resources': total_resources,
+#         'unread_messages': unread_messages,
+#         'recent_messages': recent_messages,
+#     }
+#     return render(request, 'admin/dashboard.html', context)
 
 
-@staff_member_required
-def admin_job_list(request):
-    jobs = Job.objects.all()
-    return render(request, 'admin/job_list.html', {'jobs': jobs})
+# @staff_member_required
+# def admin_job_list(request):
+#     jobs = Job.objects.all()
+#     return render(request, 'admin/job_list.html', {'jobs': jobs})
 
 
-@staff_member_required
-def admin_job_add(request):
-    form = JobForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        messages.success(request, 'Job posted successfully!')
-        return redirect('job:admin_job_list')
-    return render(request, 'admin/job_form.html', {'form': form, 'title': 'Add Job'})
+# @staff_member_required
+# def admin_job_add(request):
+#     form = JobForm(request.POST or None)
+#     if form.is_valid():
+#         form.save()
+#         messages.success(request, 'Job posted successfully!')
+#         return redirect('job:admin_job_list')
+#     return render(request, 'admin/job_form.html', {'form': form, 'title': 'Add Job'})
 
 
-@staff_member_required
-def admin_job_edit(request, pk):
-    job = get_object_or_404(Job, pk=pk)
-    form = JobForm(request.POST or None, instance=job)
-    if form.is_valid():
-        form.save()
-        messages.success(request, 'Job updated successfully!')
-        return redirect('job:admin_job_list')
-    return render(request, 'admin/job_form.html', {'form': form, 'title': 'Edit Job', 'job': job})
+# @staff_member_required
+# def admin_job_edit(request, pk):
+#     job = get_object_or_404(Job, pk=pk)
+#     form = JobForm(request.POST or None, instance=job)
+#     if form.is_valid():
+#         form.save()
+#         messages.success(request, 'Job updated successfully!')
+#         return redirect('job:admin_job_list')
+#     return render(request, 'admin/job_form.html', {'form': form, 'title': 'Edit Job', 'job': job})
 
 
-@staff_member_required
-def admin_job_delete(request, pk):
-    job = get_object_or_404(Job, pk=pk)
-    if request.method == 'POST':
-        job.delete()
-        messages.success(request, 'Job deleted.')
-        return redirect('job:admin_job_list')
-    return render(request, 'admin/confirm_delete.html', {'object': job, 'type': 'Job'})
+# @staff_member_required
+# def admin_job_delete(request, pk):
+#     job = get_object_or_404(Job, pk=pk)
+#     if request.method == 'POST':
+#         job.delete()
+#         messages.success(request, 'Job deleted.')
+#         return redirect('job:admin_job_list')
+#     return render(request, 'admin/confirm_delete.html', {'object': job, 'type': 'Job'})
 
 
-@staff_member_required
-def admin_resource_list(request):
-    resources = Resource.objects.all()
-    return render(request, 'admin/resource_list.html', {'resources': resources})
+# @staff_member_required
+# def admin_resource_list(request):
+#     resources = Resource.objects.all()
+#     return render(request, 'admin/resource_list.html', {'resources': resources})
 
 
-@staff_member_required
-def admin_resource_add(request):
-    form = ResourceForm(request.POST or None, request.FILES or None)
-    if form.is_valid():
-        form.save()
-        messages.success(request, 'Resource added successfully!')
-        return redirect('job:admin_resource_list')
-    return render(request, 'admin/resource_form.html', {'form': form, 'title': 'Add Resource'})
+# @staff_member_required
+# def admin_resource_add(request):
+#     form = ResourceForm(request.POST or None, request.FILES or None)
+#     if form.is_valid():
+#         form.save()
+#         messages.success(request, 'Resource added successfully!')
+#         return redirect('job:admin_resource_list')
+#     return render(request, 'admin/resource_form.html', {'form': form, 'title': 'Add Resource'})
 
 
-@staff_member_required
-def admin_resource_edit(request, pk):
-    resource = get_object_or_404(Resource, pk=pk)
-    form = ResourceForm(request.POST or None, request.FILES or None, instance=resource)
-    if form.is_valid():
-        form.save()
-        messages.success(request, 'Resource updated successfully!')
-        return redirect('job:admin_resource_list')
-    return render(request, 'admin/resource_form.html', {'form': form, 'title': 'Edit Resource', 'resource': resource})
+# @staff_member_required
+# def admin_resource_edit(request, pk):
+#     resource = get_object_or_404(Resource, pk=pk)
+#     form = ResourceForm(request.POST or None, request.FILES or None, instance=resource)
+#     if form.is_valid():
+#         form.save()
+#         messages.success(request, 'Resource updated successfully!')
+#         return redirect('job:admin_resource_list')
+#     return render(request, 'admin/resource_form.html', {'form': form, 'title': 'Edit Resource', 'resource': resource})
 
 
-@staff_member_required
-def admin_resource_delete(request, pk):
-    resource = get_object_or_404(Resource, pk=pk)
-    if request.method == 'POST':
-        resource.delete()
-        messages.success(request, 'Resource deleted.')
-        return redirect('job:admin_resource_list')
-    return render(request, 'admin/confirm_delete.html', {'object': resource, 'type': 'Resource'})
+# @staff_member_required
+# def admin_resource_delete(request, pk):
+#     resource = get_object_or_404(Resource, pk=pk)
+#     if request.method == 'POST':
+#         resource.delete()
+#         messages.success(request, 'Resource deleted.')
+#         return redirect('job:admin_resource_list')
+#     return render(request, 'admin/confirm_delete.html', {'object': resource, 'type': 'Resource'})
 
 
-@staff_member_required
-def admin_messages(request):
-    msgs = ContactMessage.objects.all()
-    ContactMessage.objects.filter(is_read=False).update(is_read=True)
-    return render(request, 'admin/messages.html', {'messages_list': msgs})
+# @staff_member_required
+# def admin_messages(request):
+#     msgs = ContactMessage.objects.all()
+#     ContactMessage.objects.filter(is_read=False).update(is_read=True)
+#     return render(request, 'admin/messages.html', {'messages_list': msgs})

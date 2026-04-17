@@ -14,5 +14,5 @@ COPY . .
 RUN python manage.py collectstatic --noinput
 
 # Use $PORT so Cloud Run can inject its port
-# Temporarily comment out migrate to test if container starts
-CMD ["sh", "-c", "gunicorn joblink.wsgi:application --bind 0.0.0.0:$PORT --timeout 60"]
+# CMD ["sh", "-c", "python manage.py migrate && gunicorn joblink.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 60"]
+CMD ["sh", "-c", "gunicorn joblink.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 60"]
