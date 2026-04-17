@@ -1,7 +1,7 @@
-FROM python:3.11
+FROM python:3.11-slim
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
@@ -10,4 +10,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["sh", "-c", "python manage.py migrate && gunicorn joblink.wsgi:application --bind 0.0.0.0:8080"]
+# Run collectstatic at build time (Whitenoise serves these)
+RUN python manage.py collectstatic --noinput
+
+# Use $PORT so Cloud Run can inject its port
+CMD ["sh", "-c", "python manage.py migrate && gunicorn joblink.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 60"]
