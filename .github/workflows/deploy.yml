@@ -21,11 +21,21 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Deploy to Cloud Run
+      - name: Build and push Docker image
         run: |
           gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud auth configure-docker asia-south1-docker.pkg.dev
+
+          docker build \
+            --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} \
+            -t asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/joblink/joblink:$GITHUB_SHA .
+
+          docker push asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/joblink/joblink:$GITHUB_SHA
+
+      - name: Deploy to Cloud Run
+        run: |
           gcloud run deploy joblink \
-            --source . \
+            --image asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/joblink/joblink:$GITHUB_SHA \
             --region asia-south1 \
             --allow-unauthenticated \
-            --set-env-vars DEBUG=1,SECRET_KEY=${{ secrets.SECRET_KEY }},DB_NAME=${{ secrets.DB_NAME }},DB_USER=${{ secrets.DB_USER }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_HOST=${{ secrets.DB_HOST }},DB_PORT=5432
+            --set-env-vars "^|^DEBUG=0|SECRET_KEY=${{ secrets.SECRET_KEY }}|DB_NAME=${{ secrets.DB_NAME }}|DB_USER=${{ secrets.DB_USER }}|DB_PASSWORD=${{ secrets.DB_PASSWORD }}|DB_HOST=${{ secrets.DB_HOST }}|DB_PORT=${{ secrets.DB_PORT }}"
