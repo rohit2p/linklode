@@ -9,7 +9,6 @@ jobs:
 deploy:
 runs-on: ubuntu-latest
 
-```
 steps:
   - name: Checkout code
     uses: actions/checkout@v4
@@ -25,11 +24,9 @@ steps:
   - name: Deploy to Cloud Run
     run: |
       gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
-
       gcloud run deploy joblink \
         --source . \
         --region asia-south1 \
         --allow-unauthenticated \
         --add-cloudsql-instances joblink-001:asia-south1:joblink \
         --set-env-vars DEBUG=1,SECRET_KEY=${{ secrets.SECRET_KEY }},DB_NAME=${{ secrets.DB_NAME }},DB_USER=${{ secrets.DB_USER }},DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
-```
